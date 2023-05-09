@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const repository = require('/userRepository');
+const repository = require('./userRepository');
 
 router.get('/:userId', async function(req, res, next) {
     try {
-        const user = await repository.getUesrById(req.params.userId);
+        const user = await repository.findById(req.params.userId);
         res.json(user);
     } catch (err) {
         console.log(err);
@@ -21,8 +21,8 @@ router.post('/:userId/remove', (req, res, next)=> {
 });
 
 router.post('/save',(req,res,next)=>{
-    const {email , password, nickname, phone_num, name, birthday} = req.body;
-    console.log(email);
+    const userId = repository.save(req.body);
+    res.send(userId);
 });
 
 router.post('/identity-vertification',(req,res,next)=>{

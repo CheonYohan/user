@@ -1,9 +1,20 @@
 const connection = require('../../database/databaseConnection');
+const encryption = require('../../module/secure/encryption');
 
 const findById = async (userId) => {
     try {
         const [rows] = await connection.query(`SELECT * FROM Member WHERE user_id = ?`, [userId]);
-        return rows[0];
+        return rows[0] ?? [];
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
+const findByEmailAndPassword = async (email,password) => {
+    try {
+        const [rows] = await connection.query(`SELECT * FROM Member WHERE email = ? AND password = ?`, [email,encryption.hashPassword(email,password)]);
+        return rows[0] ?? [];
     } catch (err) {
         console.error(err);
         throw err;
@@ -22,11 +33,11 @@ const findAll = async () => {
 
 const save = async (user) => {
     try {
+        const { email, password, nickname, phone_num, name, birthday } = user;
         const [result] = await connection.query(
-            `
-                INSERT INTO Member (user_id, name) VALUES (?, ?)
-            `
-            , [user.user_id, user.name]);
+            'INSERT INTO Member ( email, password, nickname, phone_num, name, birthday, join_date) VALUES (?, ?, ?, ?, ?, ?, now())',
+            [ email, encryption.hashPassword(email,password), nickname, phone_num, name, birthday]
+        );
         return result.insertId;
     } catch (err) {
         console.error(err);
@@ -34,41 +45,29 @@ const save = async (user) => {
     }
 };
 
-const update = async(user) => {
+const update = async (userId, fieldsToUpdate) => {
     try {
-        const [originUser] = await connection.query(`SELECT * FROM Member WHERE user_id = ?`, [userId]);
-        Object.keys(user).forEach(key=>{
-           originUser[key] = user[key];
-        });
+        const columnsToUpdate = [];
+        const valuesToUpdate = [];
 
-        await connection.query(
-            `
-            UPDATE Member 
-                SET
-                    user_id=?,
-                    user_id=?,
-                    user_id=?,
-                    user_id=?,
-                    user_id=?
-            WHERE 1=1 
-                AND user_id = ${originUser.user_id}
-            `
-            ,[
-                originUser.user_id,
-                originUser.user_id,
-                originUser.user_id,
-                originUser.user_id,
-                originUser.user_id
-            ]);
-        return rows[0];
+        for (const key in fieldsToUpdate) {
+            columnsToUpdate.push(`${key} = ?`);
+            valuesToUpdate.push(fieldsToUpdate[key]);
+        }
+
+        const query = `UPDATE Member SET ${columnsToUpdate.join(', ')} WHERE user_id = ?`;
+        valuesToUpdate.push(userId);
+
+        await connection.query(query, valuesToUpdate);
     } catch (err) {
         console.error(err);
         throw err;
     }
-}
+};
 
 module.exports = {
     findById,
+    findByEmailAndPassword,
     findAll,
     update,
     save
