@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userApi = require('./usersApi');
+const userApi = require('../usersApi');
 
 var root_path = 'users';
 
