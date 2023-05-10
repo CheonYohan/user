@@ -11,10 +11,10 @@ const findById = async (userId) => {
     }
 };
 
-const findByEmailAndPassword = async (email,password) => {
+const findByIdAndPassword = async (id,password) => {
     try {
-        const [rows] = await connection.query(`SELECT * FROM Member WHERE email = ? AND password = ?`, [email,encryption.hashPassword(email,password)]);
-        return rows[0] ?? [];
+        const rows = await connection.query(`SELECT * FROM Member WHERE user_id = ? AND password = ?`, [id,encryption.hashPassword(id,password).password]);
+        return rows[0] ?? {};
     } catch (err) {
         console.error(err);
         throw err;
@@ -33,10 +33,10 @@ const findAll = async () => {
 
 const save = async (user) => {
     try {
-        const { email, password, nickname, phone_num, name, birthday } = user;
+        const { user_id, email, password, nickname, phone_num, name, birthday } = user;
         const [result] = await connection.query(
-            'INSERT INTO Member ( email, password, nickname, phone_num, name, birthday, join_date) VALUES (?, ?, ?, ?, ?, ?, now())',
-            [ email, encryption.hashPassword(email,password).password, nickname, phone_num, name, birthday]
+            'INSERT INTO Member ( user_id,email, password, nickname, phone_num, name, birthday, join_date) VALUES (?, ?, ?, ?, ?, ?, ?, now())',
+            [ user_id, email, encryption.hashPassword(email,password).password, nickname, phone_num, name, birthday]
         );
         return result.insertId;
     } catch (err) {
@@ -65,10 +65,23 @@ const update = async (userId, fieldsToUpdate) => {
     }
 };
 
+const remove = async (userId) => {
+    try{
+        await connection.query(
+            'DELETE FROM Member WHERE user_id = ?',
+            [ user_id]
+        );
+    }catch(err){
+        console.error(err);
+        throw err;
+    }
+}
+
 module.exports = {
     findById,
-    findByEmailAndPassword,
+    findByIdAndPassword,
     findAll,
     update,
-    save
+    save,
+    remove
 };

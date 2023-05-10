@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <button onclick="window.location.href='/users/login'">로그인화면</button>
-  </body>
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<h1><%= title %></h1>
+<p>Welcome to <%= title %></p>
+
+<% if(!session?.user) { %>
+  <button onclick="window.location.href='/users/login'">로그인화면</button>
+<% } else { %>
+  <button onclick="window.location.href='/users'">회원리스트</button>
+<% } %>
+</body>
 </html>

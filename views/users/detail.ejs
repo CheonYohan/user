@@ -1,1 +1,78 @@
-detail
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information</title>
+</head>
+<body>
+<h1>User Information</h1>
+<form id="modifyForm" action="/users/<%= user.user_id %>/modify" method="post">
+    <table>
+        <tr>
+            <td>User ID:</td>
+            <td><input type="text" name="user_id" value="<%= user.user_id %>" readonly /></td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td><input type="text" name="email" value="<%= user.email %>" /></td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input type="password" name="password" /></td>
+        </tr>
+        <tr>
+            <td>Nickname:</td>
+            <td><input type="text" name="nickname" value="<%= user.nickname %>" /></td>
+        </tr>
+        <tr>
+            <td>Phone Number:</td>
+            <td><input type="text" name="phone_num" value="<%= user.phone_num %>" /></td>
+        </tr>
+        <tr>
+            <td>Name:</td>
+            <td><input type="text" name="name" value="<%= user.name %>" /></td>
+        </tr>
+        <tr>
+            <td>Birthday:</td>
+            <td><input type="date" name="birthday" value="<%= user.birthday %>" /></td>
+        </tr>
+        <tr>
+            <td>Join Date:</td>
+            <td><%= user.join_date %></td>
+        </tr>
+    </table>
+    <button type="submit">수정하기</button>
+    <button type="button" onclick="remove();">삭제하기</button>
+</form>
+<script>
+    const remove = async () => {
+        const form = document.querySelector('#modifyForm');
+        const id = form.querySelector(`[name='user_id']`).value;
+        const password = form.querySelector(`[name='password']`).value;
+
+        try {
+            const response = await fetch(`/users/${id}/remove`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: id,
+                    password: password
+                })
+            });
+
+            if (response.ok) {
+                console.log('삭제되었습니다.');
+                // 페이지 새로고침
+                window.location.reload();
+            } else {
+                console.error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error(`Fetch Error: ${error}`);
+        }
+    };
+
+</script>
+</body>
+</html>
