@@ -12,7 +12,6 @@ const findById = async (userId) => {
 };
 const findByEmail = async (email) => {
     try {
-        console.log(email);
         const [rows] = await connection.query(`SELECT * FROM Member WHERE email = ?`, [email]);
 
         return rows[0] ?? [];
