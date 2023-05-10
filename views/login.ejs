@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인화면</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <form method="post" action="/users/loginAction">
+        <input type="email" name="email"/>
+        <input type="password" name="password"/>
+        <input type="submit" value="로그인">
+    </form>
+    <button type="button" onclick="window.location.href='/users/join'">회원가입</button>
+</body>
+</html>

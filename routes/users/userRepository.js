@@ -1,5 +1,5 @@
 const connection = require('../../database/databaseConnection');
-const encryption = require('../../module/secure/encryption');
+const encryption = require('../../modules/secure/encryption');
 
 const findById = async (userId) => {
     try {
@@ -36,7 +36,7 @@ const save = async (user) => {
         const { email, password, nickname, phone_num, name, birthday } = user;
         const [result] = await connection.query(
             'INSERT INTO Member ( email, password, nickname, phone_num, name, birthday, join_date) VALUES (?, ?, ?, ?, ?, ?, now())',
-            [ email, encryption.hashPassword(email,password), nickname, phone_num, name, birthday]
+            [ email, encryption.hashPassword(email,password).password, nickname, phone_num, name, birthday]
         );
         return result.insertId;
     } catch (err) {

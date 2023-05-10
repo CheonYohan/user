@@ -26,7 +26,7 @@ router.post('/save',(req,res,next)=>{
 });
 
 router.post('/identity-vertification',(req,res,next)=>{
-
+    const {email,password} = req.body;
 });
 
 router.post('/login',(req,res,next)=>{
