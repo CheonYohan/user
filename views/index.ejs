@@ -12,6 +12,9 @@
   <button onclick="window.location.href='/users/login'">로그인화면</button>
 <% } else { %>
   <button onclick="window.location.href='/users'">회원리스트</button>
+    <form action="/users/logoutAction" method="post">
+      <button type="submit">로그아웃</button>
+    </form>
 <% } %>
 </body>
 </html>

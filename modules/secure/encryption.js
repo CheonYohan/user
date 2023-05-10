@@ -8,10 +8,22 @@ const hashPassword = (salt, password) => {
   return {
     password: hashedPassword
   };
+
 };
 
+const generateTemporaryPassword = (length)=> {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charsLength = chars.length;
+  let password = '';
 
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(crypto.randomBytes(1)[0] / 256 * charsLength));
+  }
+
+  return password;
+}
 
 module.exports = {
-  hashPassword
+  hashPassword,
+  generateTemporaryPassword
 };

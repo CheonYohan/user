@@ -1,4 +1,4 @@
-const connection = require('../../database/databaseConnection');
+const connection = require('../../modules/database/databaseConnection');
 const encryption = require('../../modules/secure/encryption');
 
 const findById = async (userId) => {
@@ -10,11 +10,23 @@ const findById = async (userId) => {
         throw err;
     }
 };
+const findByEmail = async (email) => {
+    try {
+        console.log(email);
+        const [rows] = await connection.query(`SELECT * FROM Member WHERE email = ?`, [email]);
+
+        return rows[0] ?? [];
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
 
 const findByIdAndPassword = async (id,password) => {
     try {
-        const rows = await connection.query(`SELECT * FROM Member WHERE user_id = ? AND password = ?`, [id,encryption.hashPassword(id,password).password]);
-        return rows[0] ?? {};
+        const [rows] = await connection.query(`SELECT * FROM Member WHERE user_id = ? AND password = ?`,
+            [id,encryption.hashPassword(id,password).password]);
+        return rows[0];
     } catch (err) {
         console.error(err);
         throw err;
@@ -51,8 +63,14 @@ const update = async (userId, fieldsToUpdate) => {
         const valuesToUpdate = [];
 
         for (const key in fieldsToUpdate) {
+            if(!('user_id,email, password, nickname, phone_num, name, birthday, join_date').includes(key))
+                continue;
             columnsToUpdate.push(`${key} = ?`);
-            valuesToUpdate.push(fieldsToUpdate[key]);
+            if(key == 'password'){
+                valuesToUpdate.push(encryption.hashPassword('secret',fieldsToUpdate[key]).password);
+            }else{
+                valuesToUpdate.push(fieldsToUpdate[key]);
+            }
         }
 
         const query = `UPDATE Member SET ${columnsToUpdate.join(', ')} WHERE user_id = ?`;
@@ -69,7 +87,7 @@ const remove = async (userId) => {
     try{
         await connection.query(
             'DELETE FROM Member WHERE user_id = ?',
-            [ user_id]
+            [userId]
         );
     }catch(err){
         console.error(err);
@@ -79,6 +97,7 @@ const remove = async (userId) => {
 
 module.exports = {
     findById,
+    findByEmail,
     findByIdAndPassword,
     findAll,
     update,

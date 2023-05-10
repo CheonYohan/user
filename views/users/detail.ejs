@@ -16,6 +16,10 @@
             <td><input type="text" name="email" value="<%= user.email %>" /></td>
         </tr>
         <tr>
+            <td>Current Password:</td>
+            <td><input type="password" name="current_password" placeholder="현재비밀번호" /></td>
+        </tr>
+        <tr>
             <td>Password:</td>
             <td><input type="password" name="password" /></td>
         </tr>
@@ -33,7 +37,7 @@
         </tr>
         <tr>
             <td>Birthday:</td>
-            <td><input type="date" name="birthday" value="<%= user.birthday %>" /></td>
+            <td><input type="date" name="birthday" value="<%= user.birthday.toISOString().slice(0,10) %>" /></td>
         </tr>
         <tr>
             <td>Join Date:</td>
@@ -47,25 +51,27 @@
     const remove = async () => {
         const form = document.querySelector('#modifyForm');
         const id = form.querySelector(`[name='user_id']`).value;
-        const password = form.querySelector(`[name='password']`).value;
+        const password = form.querySelector(`[name='current_password']`).value;
 
         try {
             const response = await fetch(`/users/${id}/remove`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     user_id: id,
-                    password: password
+                    current_password: password
                 })
             });
 
             if (response.ok) {
                 console.log('삭제되었습니다.');
                 // 페이지 새로고침
-                window.location.reload();
+                window.location.replace('/users');
             } else {
+                console.log(response);
+                alert(await response.text());
                 console.error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {

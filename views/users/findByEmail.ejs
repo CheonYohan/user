@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>아이디 찾기</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <input name="email" type="email" placeholder="e-mail" />
+    <input type="submit" onclick="findId()" value="아이디 찾기" />
+    <script>
+        const findId = async () => {
+            const email = document.querySelector(`[name='email']`).value;
+
+            try {
+                const response = await fetch(`/api/users/findId`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('삭제되었습니다.');
+                    // 페이지 새로고침
+                    alert(await response.text());
+                    window.location.replace('/');
+                } else {
+                    console.log(response);
+                    alert(await response.text());
+                    console.error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Fetch Error: ${error}`);
+            }
+        };
+
+    </script>
+</body>
+</html>
