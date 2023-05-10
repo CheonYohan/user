@@ -1,8 +1,8 @@
 const nodemailer = require('nodemailer');
 
 const mailerConfig = {
-  user: 'sosu2842@gmail.com'
-  ,pass : 'qodcnlzkvygboxzh'
+    user: 'your_email@gmail.com',
+    pass: 'your_password'
 };
 // 메일 발송에 사용될 Gmail 계정 정보
 const transporter = nodemailer.createTransport({
